@@ -145,3 +145,20 @@ Usage: <class_name>.update(<_id>, <dictionary>)
 This fork is maintained for the ALU AirBnB Clone - MySQL project.
 
 Contributor: Runweztt
+
+## Deploy Static
+
+This stage deploys the static AirBnB front end to multiple web servers.
+
+The deployment workflow prepares Nginx, creates timestamped web_static
+archives, uploads releases to both web servers, updates the current
+symbolic link, and supports cleaning obsolete releases.
+
+Deployment files:
+
+- 0-setup_web_static.sh
+- 1-pack_web_static.py
+- 2-do_deploy_web_static.py
+- 3-deploy_web_static.py
+- 100-clean_web_static.py
+- 101-setup_web_static.pp
