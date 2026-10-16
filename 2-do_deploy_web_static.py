@@ -1,8 +1,7 @@
 #!/usr/bin/python3
-"""Deploy a web_static archive to the configured web servers."""
+"""Deploy a web_static archive to both AirBnB web servers."""
 
 import os
-
 from fabric.api import env, put, run, settings
 
 
@@ -15,31 +14,23 @@ env.user = "ubuntu"
 
 
 def do_deploy(archive_path):
-    """Deploy an existing web_static archive to all configured hosts."""
-    if not os.path.exists(archive_path):
+    """Deploy an archive to both configured AirBnB web servers."""
+    if not os.path.isfile(archive_path):
         return False
 
     archive_name = os.path.basename(archive_path)
     release_name = archive_name[:-4]
-
     remote_archive = "/tmp/{}".format(archive_name)
-    release_path = "/data/web_static/releases/{}".format(
+    release_path = "/data/web_static/releases/{}/".format(
         release_name
     )
 
     with settings(warn_only=True):
-        result = put(
-            archive_path,
-            remote_archive
-        )
-
+        result = put(archive_path, remote_archive)
         if result.failed:
             return False
 
-        result = run(
-            "mkdir -p {}".format(release_path)
-        )
-
+        result = run("mkdir -p {}".format(release_path))
         if result.failed:
             return False
 
@@ -49,31 +40,30 @@ def do_deploy(archive_path):
                 release_path
             )
         )
+        if result.failed:
+            return False
 
+        result = run("rm -f {}".format(remote_archive))
         if result.failed:
             return False
 
         result = run(
-            "cp -a {0}/web_static/. {0}/ && "
-            "rm -rf {0}/web_static".format(
+            "cp -a {0}web_static/. {0}".format(
                 release_path
             )
         )
-
         if result.failed:
             return False
 
         result = run(
-            "rm -f {}".format(remote_archive)
+            "rm -rf {}web_static".format(
+                release_path
+            )
         )
-
         if result.failed:
             return False
 
-        result = run(
-            "rm -f /data/web_static/current"
-        )
-
+        result = run("rm -rf /data/web_static/current")
         if result.failed:
             return False
 
@@ -82,8 +72,8 @@ def do_deploy(archive_path):
                 release_path
             )
         )
-
         if result.failed:
             return False
 
+    print("New version deployed!")
     return True
