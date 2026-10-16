@@ -162,3 +162,8 @@ Deployment files:
 - 3-deploy_web_static.py
 - 100-clean_web_static.py
 - 101-setup_web_static.pp
+
+## AirBnB clone - Web framework
+
+This stage introduces Flask routes, dynamic templates, storage-backed
+State and City views, and the HBNB filters interface.
